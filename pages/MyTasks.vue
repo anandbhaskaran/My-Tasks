@@ -1,13 +1,14 @@
 <template>
   <div class="flex">
-  <DarkSidebar current="Dashboard"/>
+  <DarkSidebar current="My Tasks"/>
     <main class="flex-1">
       <div class="py-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 class="text-2xl font-semibold text-gray-900">Dashboard</h1>
+          <h1 class="text-2xl font-semibold text-gray-900">My Tasks</h1>
         </div>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
           <!-- Replace with your content -->
+          <TaskTable/>
           <div class="py-4">
             <div class="border-4 border-dashed border-gray-200 rounded-lg h-96" />
           </div>
