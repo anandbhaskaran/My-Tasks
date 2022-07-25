@@ -66,7 +66,7 @@ export default {
   },
   setup() {
     const BASE_URI = "https://70nxhlaiqc.execute-api.eu-central-1.amazonaws.com/Live/todo"
-    const USER_ID = "1"
+    const USER_ID = "123"
     const tasks = ref([]);
     const loading = ref(true);
     const error = ref(null);
@@ -74,20 +74,21 @@ export default {
       title: "",
       description: ""
     })
+
     async function fetchData() {
       loading.value = true;
       const response = await axios.get(BASE_URI + '?user=' + USER_ID)
       tasks.value = response.data.items
     }
 
-    function generateQuickGuid() {
-      return Math.random().toString(36).substring(2, 15) +
-        Math.random().toString(36).substring(2, 15);
+    function generateQuickId() {
+      return Math.floor(Date.now() / 1000).toString()
     }
+
 
     async function createTask() {
       await axios.post(BASE_URI, {
-        "task_id": generateQuickGuid(),
+        "task_id": generateQuickId(),
         "title": newTask.value.title,
         "description": newTask.value.description,
         "completed": "false",
@@ -95,6 +96,8 @@ export default {
         "created_at": new Date().toUTCString()
       })
       await fetchData()
+      newTask.value.title = ""
+      newTask.value.description = ""
     }
 
     async function updateTask(task) {

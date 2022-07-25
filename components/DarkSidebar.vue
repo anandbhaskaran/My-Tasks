@@ -106,6 +106,7 @@ import {
   HomeIcon,
   MenuIcon,
   UsersIcon,
+  CheckCircleIcon,
   XIcon,
 } from '@vue-hero-icons/outline'
 
@@ -114,8 +115,9 @@ const props = defineProps({
 })
 
 const navigation = [
-  { name: 'Dashboard', href: '/', icon: HomeIcon, current: props.current === 'Dashboard' },
-  { name: 'My Tasks', href: '/myTasks', icon: UsersIcon, current: props.current === 'My Tasks' }
+  { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, current: props.current === 'Dashboard' },
+  { name: 'My Tasks', href: '/', icon: UsersIcon, current: props.current === 'My Tasks' },
+  { name: 'Live Tasks', href: '/live', icon: CheckCircleIcon, current: props.current === 'Live Tasks' }
 ]
 
 const sidebarOpen = ref(false)

@@ -1,6 +1,6 @@
 <template>
   <div class="flex">
-  <DarkSidebar current="My Tasks"/>
+  <DarkSidebar current="Live Tasks"/>
   <main class="flex-1 pt-12">
     <div class="py-6">
       <div class="max-w-7xl mx-auto pb-4 px-4 sm:px-6 lg:px-8">
