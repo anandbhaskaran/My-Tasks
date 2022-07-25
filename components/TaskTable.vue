@@ -100,6 +100,11 @@ export default {
     async function updateTask(task) {
       await axios.post(BASE_URI, task)
       await fetchData()
+      if(task.completed){
+        this.$toast.success('Congrats. You have completed '+ task.title, {
+          duration: 1500
+        })
+      }
     }
 
     onMounted(() => {
@@ -124,3 +129,4 @@ export default {
   }
 }
 </script>
+

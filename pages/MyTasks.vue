@@ -1,18 +1,18 @@
 <template>
   <div class="flex">
   <DarkSidebar current="My Tasks"/>
-    <main class="flex-1">
-      <div class="py-6">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 class="text-2xl font-semibold text-gray-900">My Tasks</h1>
-        </div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-          <!-- Replace with your content -->
-          <TaskTable/>
-          <!-- /End replace -->
-        </div>
+  <main class="flex-1 pt-12">
+    <div class="py-6">
+      <div class="max-w-7xl mx-auto pb-4 px-4 sm:px-6 lg:px-8">
+        <h1 class="text-2xl font-semibold text-gray-900">My Tasks</h1>
       </div>
-    </main>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+        <!-- Replace with your content -->
+        <TaskTable/>
+        <!-- /End replace -->
+      </div>
+    </div>
+  </main>
   </div>
 </template>
 
