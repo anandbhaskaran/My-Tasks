@@ -13,31 +13,40 @@
                 <th scope="col" class="min-w-[12rem] py-3.5 pr-3 text-left text-sm font-semibold text-gray-900">Title</th>
                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Description</th>
                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Created</th>
-                <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
-                  <span class="sr-only">Edit</span>
-                </th>
               </tr>
               </thead>
               <tbody class="divide-y divide-gray-200 bg-white">
-              <tr v-for="person in people" :key="person.email" :class="[person.completed && 'bg-grey-50']">
+              <tr v-for="task in tasks" :key="task.id" :class="[task.completed && 'bg-grey-50']">
                 <td class="relative w-12 px-6 sm:w-16 sm:px-8">
-                  <input v-model="person.completed" type="checkbox" :value="person.email" class="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-indigo-300 focus:text-indigo-500 focus:ring-indigo-500 sm:left-6"  />
+                  <input v-model="task.completed" type="checkbox" class="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-indigo-300 focus:text-indigo-500 focus:ring-indigo-500 sm:left-6" @change="updateTask(task)"  />
                 </td>
-                <td :class="['whitespace-nowrap py-4 pr-3 text-sm font-medium', selectedPeople.includes(person.email) ? 'text-indigo-600' : 'text-gray-900']">
-                  {{ person.name }}
-                </td>
-                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                  {{ person.title }}
+
+                <td :class="['whitespace-nowrap py-4 pr-3 text-sm font-medium', task.completed ? 'text-indigo-600' : 'text-gray-900']">
+                  {{ task.title }}
                 </td>
                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                  {{ person.email }}
+                  {{ task.description }}
                 </td>
-                <td class="whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                  <a href="#" class="text-indigo-600 hover:text-indigo-900"
-                  >Edit<span class="sr-only">, {{ person.name }}</span></a
-                  >
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                  {{ getDate(task.created_at) }}
                 </td>
               </tr>
+              <tr>
+                <td class="relative w-12 px-6 sm:w-16 sm:px-8">
+                  <input type="checkbox" disabled class="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-indigo-300 focus:text-indigo-500 focus:ring-indigo-500 sm:left-6"  />
+                </td>
+                <td  class="whitespace-nowrap pl-0 pr-3 py-4 text-sm text-gray-500">
+                  <input v-model="newTask.title" type="text" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md" placeholder="Title" />
+                </td>
+                <td  class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                  <input v-model="newTask.description" type="text" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md" placeholder="Description" />
+                </td>
+                <td class="whitespace-nowrap px-4 py-4 text-sm text-gray-500">
+                  <a href="#" class="text-indigo-600 hover:text-indigo-900" @click="createTask"
+                  >Create</a>
+                </td>
+              </tr>
+
               </tbody>
             </table>
           </div>
@@ -47,23 +56,71 @@
   </div>
 </template>
 
-<script setup>
-import { ref, computed } from 'vue'
+<script>
+import { ref, onMounted } from "vue";
+import axios from 'axios';
 
-const people = ref([
-  {
-    name: 'Lindsay Walton',
-    title: 'Front-end Developer',
-    email: 'lindsay.walton@example.com',
-    completed: true
+export default {
+  name: 'TaskTable',
+  props: {
   },
-  // More people...
-])
+  setup() {
+    const BASE_URI = "https://70nxhlaiqc.execute-api.eu-central-1.amazonaws.com/Live/todo"
+    const USER_ID = "1"
+    const tasks = ref([]);
+    const loading = ref(true);
+    const error = ref(null);
+    const newTask = ref({
+      title: "",
+      description: ""
+    })
+    async function fetchData() {
+      loading.value = true;
+      const response = await axios.get(BASE_URI + '?user=' + USER_ID)
+      tasks.value = response.data.items
+    }
 
-const selectedPeople = ref([])
-const checked = ref(false)
+    function generateQuickGuid() {
+      return Math.random().toString(36).substring(2, 15) +
+        Math.random().toString(36).substring(2, 15);
+    }
+
+    async function createTask() {
+      await axios.post(BASE_URI, {
+        "task_id": generateQuickGuid(),
+        "title": newTask.value.title,
+        "description": newTask.value.description,
+        "completed": "false",
+        "user_id": USER_ID,
+        "created_at": new Date().toUTCString()
+      })
+      await fetchData()
+    }
+
+    async function updateTask(task) {
+      await axios.post(BASE_URI, task)
+      await fetchData()
+    }
+
+    onMounted(() => {
+      fetchData();
+    });
+
+    function getDate(utcDate){
+      const d = new Date(utcDate);
+      const month = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+      return  d.getDate() + "-" + month[d.getMonth()]
+    }
+
+    return {
+      tasks,
+      loading,
+      error,
+      newTask,
+      createTask,
+      updateTask,
+      getDate
+    };
+  }
+}
 </script>
-© 2022 Tailwind Labs Inc. All rights reserved.
-
-Privacy policy
-Changelog
